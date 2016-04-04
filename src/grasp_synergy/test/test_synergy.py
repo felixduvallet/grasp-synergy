@@ -1,9 +1,16 @@
 import unittest
 
+from grasp_synergy.grasp_synergy import GraspSynergy
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, True)
+
+class TestCase(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_constructor(self):
+        gs = GraspSynergy()
+        self.assertIsNotNone(gs)
 
 
 if __name__ == '__main__':
