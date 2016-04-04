@@ -61,7 +61,7 @@ class GraspSynergy(object):
         return self.fit_joint_values(joint_values)
 
     def compute_grasp(self, alphas):
-        if not hasattr(self._pca, 'n_components_'):
+        if not hasattr(self._pca, 'components_'):
             rospy.logwarn('No grasp synergies, did you call fit_joint_*?')
             return None
         pass

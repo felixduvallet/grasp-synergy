@@ -32,13 +32,13 @@ class TestCase(unittest.TestCase):
         self.synergy.fit_joint_values(joints)
         self.assertEqual(5, self.synergy._D)
         self.assertEqual(25, self.synergy._N)
-        self.assertEqual(5, self.synergy._pca.n_components_)
+        self.assertEqual(5, len(self.synergy._pca.components_))
 
     def test_fit_joint_messages(self):
         self.synergy.fit_joint_state_messages(self.messages)
         self.assertEqual(16, self.synergy._D)
         self.assertEqual(82, self.synergy._N)
-        self.assertEqual(16, self.synergy._pca.n_components_)
+        self.assertEqual(16, len(self.synergy._pca.components_))
 
     def test_compute_grasp_no_data(self):
         ret = self.synergy.compute_grasp([0, 1, 3])
