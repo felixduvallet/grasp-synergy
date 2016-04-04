@@ -44,7 +44,34 @@ class TestCase(unittest.TestCase):
         ret = self.synergy.compute_grasp([0, 1, 3])
         self.assertIsNone(ret)
 
+    def test_compute_grasp_shape(self):
+        self.synergy.fit_joint_state_messages(self.messages)
+        ret = self.synergy.compute_grasp([1.0])
+        self.assertIsNotNone(ret)
+        self.assertEqual((16,), ret.shape)
 
+    def test_compute_grasp_zero_alphas(self):
+        self.synergy.fit_joint_state_messages(self.messages)
+        ret = self.synergy.compute_grasp([])
+        ref = self.synergy._pca.mean_
+        np.testing.assert_array_almost_equal(ref, ret)
+
+    def test_compute_grasp_sum_alphas(self):
+        self.synergy.fit_joint_state_messages(self.messages)
+        ret = self.synergy.compute_grasp([1.0, 1.0])
+        ref = (self.synergy._pca.components_[0] +
+               self.synergy._pca.components_[1] + self.synergy._pca.mean_)
+        np.testing.assert_array_almost_equal(ref, ret)
+
+    def test_compute_grasp_many_alphas(self):
+        # Make sure we can pass in a large vector of coefficients without
+        # failing.
+        self.synergy.fit_joint_state_messages(self.messages)
+        alphas = np.ones((100,))
+        ret = self.synergy.compute_grasp(alphas)
+        ref = (np.sum(self.synergy._pca.components_, axis=0) +
+               self.synergy._pca.mean_)
+        np.testing.assert_array_almost_equal(ref, ret)
 
 
 if __name__ == '__main__':

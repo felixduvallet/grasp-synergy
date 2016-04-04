@@ -61,12 +61,30 @@ class GraspSynergy(object):
         return self.fit_joint_values(joint_values)
 
     def compute_grasp(self, alphas):
+        """
+        Reconstruct a grasp given a combination of (low-dimensional) synergy
+        coefficients to get a (full-dimensional) grasp configuration.
+
+        The coefficients are a weighting vector of the various (ordered)
+        principal grasp components.
+
+        :return mean + sum_i alpha_i * coeff_i. If the synergy is not already
+        computed this returns None.
+
+        """
+
         if not hasattr(self._pca, 'components_'):
             rospy.logwarn('No grasp synergies, did you call fit_joint_*?')
             return None
-        pass
 
+        num_components = len(self._pca.components_)
+        num_alpha = len(alphas)
 
+        # Compute mean + <alphas, components>. Truncate both alphas and
+        # components to ensure we have correct shapes. The resulting vector
+        # is a D-dimensional vector.
+        ret = self._pca.mean_ + np.dot(alphas[0:num_components],
+                                       self._pca.components_[0:num_alpha])
 
+        return ret
 
-    pass
