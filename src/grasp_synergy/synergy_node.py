@@ -1,14 +1,27 @@
+#!/usr/bin/env python
+
 import numpy as np
 
 import rospy
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float32MultiArray, Float32
 
+from grasp_synergy import GraspSynergy
 
 
 class GraspSynergyNode(object):
-    def __init__(self, joint_cmd_topic, synergy_input_topic='/grasp_synergy',
+    """
+    The grasp synergy node subscribes to low-dimensional synergies and publishes
+    desired joint state.
+
+    It is hand agnostic.
+    """
+
+    def __init__(self, joint_cmd_topic,
+                 synergy_input_topic='/grasp_synergy',
                  num_synergies=2):
+
+        self._synergy = GraspSynergy()
 
         self._publisher = rospy.Publisher(
             joint_cmd_topic, JointState, queue_size=1)
@@ -17,20 +30,34 @@ class GraspSynergyNode(object):
         self._subscriber_components = []
         self._init_subscribers(synergy_input_topic, num_synergies)
 
-        pass
+    def fit_joint_values(self, joint_values):
+        return self._synergy.fit_joint_values(joint_values)
+
+    def fit_joint_state_messages(self, joint_state_messages):
+        return self._synergy.fit_joint_state_messages(joint_state_messages)
+
+    def fit_bag_file(self, bag_filepath):
+        return self._synergy.fit_bag_file(bag_filepath)
 
     def command_synergy(self, synergy):
-        rospy.loginfo('Commanding synergy: {}'.format(synergy))
 
+        if not self._synergy.trained:
+            rospy.logwarn('Synergy is not initialized: did you provide '
+                          'training data?')
+            return
 
-        pass
+        rospy.logdebug('Commanding synergy: {}'.format(synergy))
+        grasp = self._synergy.compute_grasp(synergy)
+
+        joint_state = JointState()
+        joint_state.position = grasp
+        self._publisher.publish(joint_state)
 
     def _callback_main(self, data):
         """
         Main callback for a fully-specified coefficient vector.
         Commands the synergy.
         """
-        rospy.loginfo('Received data! {}'.format(data))
         alpha = data.data
         self.command_synergy(alpha)
 
@@ -41,7 +68,7 @@ class GraspSynergyNode(object):
         Creates an alpha vector with all zeros except for the given component,
         then commands the synergy.
         """
-        rospy.loginfo('Received data for component {} - {}'.format(
+        rospy.logdebug('Received data for component {} - {}'.format(
             component_number, data.data))
         alpha = np.zeros((component_number + 1,))
         alpha[component_number] = data.data
@@ -80,7 +107,12 @@ class GraspSynergyNode(object):
 
 def run():
     rospy.init_node('grasp_synergy')
-    node = GraspSynergyNode(joint_cmd_topic='/allegro_cmd', num_synergies=5)
+
+    hand_control_topic = '/allegroHand_0/joint_cmd'
+    node = GraspSynergyNode(joint_cmd_topic=hand_control_topic, num_synergies=5)
+    fpath = '/home/felixd/proj/catkin-active_handovers/src/allegro-hand-ros/synergies/index_wag.bag'
+    fpath = '/home/felixd/proj/catkin-active_handovers/src/allegro-hand-ros/synergies/envelop.bag'
+    node.fit_bag_file(fpath)
     rospy.spin()
 
 
