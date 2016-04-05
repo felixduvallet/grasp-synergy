@@ -43,6 +43,8 @@ corresponding grasp configuration in the original D-dimensional space.
 The synergy node enables you to load a grasp synergy space, create subscribers
 for the synergy space, and publish desired joint state messages to control the
 hand.
+It creates one top-level subscriber for fully-specified coefficient vector and
+many per-component subscribers for each component (each for a single value).
 
 Each time the node receives a new low-dimensional (synergy-space) point, it
 computes the hand configuration and publishes a message with the desired joint
