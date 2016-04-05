@@ -1,7 +1,8 @@
-import rospy
-
 import numpy as np
 from sklearn.decomposition import PCA
+
+import rospy
+import rosbag
 
 
 class GraspSynergy(object):
@@ -35,15 +36,22 @@ class GraspSynergy(object):
         :param joint_values A numpy array (N by D) with N datapoints of D
         dimensions.
 
+        :return True if the synergies were properly fit.
+
         """
+
+        if len(joint_values) <= 0:
+            return False
+
         self._N = joint_values.shape[0]
         self._D = joint_values.shape[1]
         self._transformed_joint_angles = self._pca.fit_transform(joint_values)
+        return True
 
     def fit_joint_state_messages(self, joint_states_msgs):
         """
-        Extract joint states from a list of ROS messages, then compute the grasp
-        synergies.
+        Extract joint state values from a list of ROS messages, then compute the
+        grasp synergies.
 
         :param joint_states_msgs A list of ROS sensor_msgs/JointState.
         """
@@ -59,6 +67,28 @@ class GraspSynergy(object):
         joint_values = np.array(joint_values)
 
         return self.fit_joint_values(joint_values)
+
+    def fit_bag_file(self, bag_filepath):
+        """
+        Extract *all* joint state messages from the given bag file, then compute
+        the hand synergies.
+
+        :param bag_filepath: Fully-qualified filepath of the bagfile.
+        """
+
+        try:
+            bag = rosbag.Bag(bag_filepath)
+        except IOError:
+            rospy.logerr('Could not open file: {}'.format(bag_filepath))
+            return False
+
+        # Collect *all* messages of type JointState.
+        joint_messages = []
+        for (topic, msg, time) in bag.read_messages():
+            if 'JointState' in str(type(msg)):
+                joint_messages.append(msg)
+
+        return self.fit_joint_state_messages(joint_messages)
 
     def compute_grasp(self, alphas):
         """

@@ -29,16 +29,49 @@ class TestCase(unittest.TestCase):
 
     def test_fit_joint_values(self):
         joints = np.random.random((25, 5))
-        self.synergy.fit_joint_values(joints)
+        ret = self.synergy.fit_joint_values(joints)
+        self.assertTrue(ret)
         self.assertEqual(5, self.synergy._D)
         self.assertEqual(25, self.synergy._N)
         self.assertEqual(5, len(self.synergy._pca.components_))
 
+    def test_fit_joint_values_empty(self):
+        joints = np.zeros((0, 0))
+        ret = self.synergy.fit_joint_values(joints)
+        self.assertFalse(ret)
+        self.assertEqual(0, self.synergy._D)
+        self.assertEqual(0, self.synergy._N)
+        self.assertFalse(hasattr(self.synergy._pca, 'components_'))
+
     def test_fit_joint_messages(self):
-        self.synergy.fit_joint_state_messages(self.messages)
+        ret = self.synergy.fit_joint_state_messages(self.messages)
+        self.assertTrue(ret)
         self.assertEqual(16, self.synergy._D)
         self.assertEqual(82, self.synergy._N)
         self.assertEqual(16, len(self.synergy._pca.components_))
+
+    def test_fit_joint_messages_empty(self):
+        messages = []
+        ret = self.synergy.fit_joint_values(messages)
+        self.assertFalse(ret)
+        self.assertEqual(0, self.synergy._D)
+        self.assertEqual(0, self.synergy._N)
+        self.assertFalse(hasattr(self.synergy._pca, 'components_'))
+
+    def test_fit_bag_file(self):
+        fpath = os.path.join(os.path.dirname(__file__), 'data', 'allegro.bag')
+        ret = self.synergy.fit_bag_file(fpath)
+        self.assertTrue(ret)
+        self.assertEqual(16, self.synergy._D)
+        self.assertEqual(82, self.synergy._N)
+        self.assertEqual(16, len(self.synergy._pca.components_))
+
+    def test_bag_file_nonexistent(self):
+        ret = self.synergy.fit_bag_file('/not/a/file')
+        self.assertFalse(ret)
+        self.assertEqual(0, self.synergy._D)
+        self.assertEqual(0, self.synergy._N)
+        self.assertFalse(hasattr(self.synergy._pca, 'components_'))
 
     def test_compute_grasp_no_data(self):
         ret = self.synergy.compute_grasp([0, 1, 3])
@@ -78,7 +111,6 @@ class TestCase(unittest.TestCase):
         (ret_min, ret_max) = self.synergy.synergy_range(0)
         self.assertAlmostEqual(-1.18130, ret_min, places=4)
         self.assertAlmostEqual(1.12507406, ret_max, places=4)
-
 
     def test_component_ranges_1(self):
         self.synergy.fit_joint_state_messages(self.messages)
