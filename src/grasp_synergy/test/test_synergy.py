@@ -63,7 +63,7 @@ class TestCase(unittest.TestCase):
         self.assertFalse(ret)
         self.assertEqual(0, self.synergy._D)
         self.assertEqual(0, self.synergy._N)
-        self.assertFalse(hasattr(self.synergy._pca, 'components_'))
+        self.assertFalse(self.synergy.trained)
 
     def test_fit_joint_messages(self):
         ret = self.synergy.fit_joint_state_messages(self.messages)
@@ -78,7 +78,7 @@ class TestCase(unittest.TestCase):
         self.assertFalse(ret)
         self.assertEqual(0, self.synergy._D)
         self.assertEqual(0, self.synergy._N)
-        self.assertFalse(hasattr(self.synergy._pca, 'components_'))
+        self.assertFalse(self.synergy.trained)
 
     def test_fit_bag_file(self):
         fpath = os.path.join(os.path.dirname(__file__), 'data', 'allegro.bag')
@@ -93,7 +93,7 @@ class TestCase(unittest.TestCase):
         self.assertFalse(ret)
         self.assertEqual(0, self.synergy._D)
         self.assertEqual(0, self.synergy._N)
-        self.assertFalse(hasattr(self.synergy._pca, 'components_'))
+        self.assertFalse(self.synergy.trained)
 
     def test_compute_grasp_no_data(self):
         ret = self.synergy.compute_grasp([0, 1, 3])
