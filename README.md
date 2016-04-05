@@ -64,7 +64,9 @@ So for example, you might have the following subscribers:
 ```
 
 This enables you to use tools like `rqt_ez_publisher` to provide a nice slider
-GUI interface to the synergy space.
+GUI interface to the synergy space:
+
+![rqt_grasp](https://cloud.githubusercontent.com/assets/6153835/14283454/c8cb284a-fb43-11e5-995e-452cfa981145.png)
 
 **Publisher:**
 The desired joint state topic must be given.
