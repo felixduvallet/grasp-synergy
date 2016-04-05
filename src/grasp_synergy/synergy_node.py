@@ -107,9 +107,10 @@ class GraspSynergyNode(object):
             rospy.loginfo('  Created component subscriber {}'.format(topic))
         pass
 
+
 def run(arguments):
     parser = argparse.ArgumentParser(
-        description=('Command hands in a low-dimensional grasp synergy space.'))
+        description='Command hands in a low-dimensional grasp synergy space.')
     parser.add_argument('--hand_control_topic', required=True,
                         help='Commanded joint state topic.')
     parser.add_argument('--bag_filename', required=True,
@@ -124,7 +125,8 @@ def run(arguments):
     num_synergies = args.num_synergies
     fpath = args.bag_filename
 
-    node = GraspSynergyNode(joint_cmd_topic=hand_control_topic, num_synergies=num_synergies)
+    node = GraspSynergyNode(joint_cmd_topic=hand_control_topic,
+                            num_synergies=num_synergies)
     node.fit_bag_file(fpath)
     rospy.spin()
 
