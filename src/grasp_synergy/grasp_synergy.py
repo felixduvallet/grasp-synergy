@@ -80,11 +80,36 @@ class GraspSynergy(object):
         num_components = len(self._pca.components_)
         num_alpha = len(alphas)
 
-        # Compute mean + <alphas, components>. Truncate both alphas and
+        rospy.logdebug('Computing a grasp using {} principal components'.
+                       format(min(num_alpha, num_components)))
+
+        # Compute mean + dot<alphas, components>. Truncate both alphas and
         # components to ensure we have correct shapes. The resulting vector
         # is a D-dimensional vector.
         ret = self._pca.mean_ + np.dot(alphas[0:num_components],
                                        self._pca.components_[0:num_alpha])
 
         return ret
+
+    def synergy_range(self, component_num):
+        """
+        Compute the range of values for the i'th component of the synergy, using
+        the transformed original values used to train the PCA.
+
+        If there are no synergies or the component number is invalid, returns
+        (0, 0).
+
+        :return (min, max) for transformed values
+        """
+
+        transformed_min, transformed_max = 0.0, 0.0
+
+        # If there are no synergies, D = 0 so this does not get called.
+        if 0 <= component_num < self._D:
+            transformed_min = \
+                np.min(self._transformed_joint_angles, axis=0)[component_num]
+            transformed_max = \
+                np.max(self._transformed_joint_angles, axis=0)[component_num]
+        return transformed_min, transformed_max
+
 

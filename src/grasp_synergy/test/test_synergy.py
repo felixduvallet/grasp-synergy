@@ -73,6 +73,34 @@ class TestCase(unittest.TestCase):
                self.synergy._pca.mean_)
         np.testing.assert_array_almost_equal(ref, ret)
 
+    def test_component_ranges_0(self):
+        self.synergy.fit_joint_state_messages(self.messages)
+        (ret_min, ret_max) = self.synergy.synergy_range(0)
+        self.assertAlmostEqual(-1.18130, ret_min, places=4)
+        self.assertAlmostEqual(1.12507406, ret_max, places=4)
+
+
+    def test_component_ranges_1(self):
+        self.synergy.fit_joint_state_messages(self.messages)
+        (ret_min, ret_max) = self.synergy.synergy_range(1)
+        self.assertAlmostEqual(-0.41370870, ret_min, places=4)
+        self.assertAlmostEqual(0.4547809556, ret_max, places=4)
+
+    def test_component_ranges_untrained(self):  # try before training.
+        (ret_min, ret_max) = self.synergy.synergy_range(1)
+        self.assertEqual(0, ret_min)
+        self.assertEqual(0, ret_max)
+
+    def test_component_ranges_negative(self):
+        (ret_min, ret_max) = self.synergy.synergy_range(-1)
+        self.assertEqual(0, ret_min)
+        self.assertEqual(0, ret_max)
+
+    def test_component_ranges_too_big(self):
+        (ret_min, ret_max) = self.synergy.synergy_range(100)
+        self.assertEqual(0, ret_min)
+        self.assertAlmostEqual(0, ret_max)
+
 
 if __name__ == '__main__':
     unittest.main()
