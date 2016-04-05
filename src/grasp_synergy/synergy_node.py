@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+import argparse
 import numpy as np
 
 import rospy
@@ -105,16 +107,28 @@ class GraspSynergyNode(object):
             rospy.loginfo('  Created component subscriber {}'.format(topic))
         pass
 
-def run():
+def run(arguments):
+    parser = argparse.ArgumentParser(
+        description=('Command hands in a low-dimensional grasp synergy space.'))
+    parser.add_argument('--hand_control_topic', required=True,
+                        help='Commanded joint state topic.')
+    parser.add_argument('--bag_filename', required=True,
+                        help='Filepath for bag file of grasp data')
+    parser.add_argument('--num_synergies', default=4,
+                        help='Number of synergies.')
+    args = parser.parse_args(arguments)
+
     rospy.init_node('grasp_synergy')
 
-    hand_control_topic = '/allegroHand_0/joint_cmd'
-    node = GraspSynergyNode(joint_cmd_topic=hand_control_topic, num_synergies=5)
-    fpath = '/home/felixd/proj/catkin-active_handovers/src/allegro-hand-ros/synergies/index_wag.bag'
-    fpath = '/home/felixd/proj/catkin-active_handovers/src/allegro-hand-ros/synergies/envelop.bag'
+    hand_control_topic = args.hand_control_topic
+    num_synergies = args.num_synergies
+    fpath = args.bag_filename
+
+    node = GraspSynergyNode(joint_cmd_topic=hand_control_topic, num_synergies=num_synergies)
     node.fit_bag_file(fpath)
     rospy.spin()
 
 
 if __name__ == '__main__':
-    run()
+    arguments = sys.argv[1:]  # argv[0] is the program name.
+    run(arguments)

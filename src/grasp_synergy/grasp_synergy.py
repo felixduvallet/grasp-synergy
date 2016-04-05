@@ -55,6 +55,12 @@ class GraspSynergy(object):
         self._N = joint_values.shape[0]
         self._D = joint_values.shape[1]
         self._transformed_joint_angles = self._pca.fit_transform(joint_values)
+
+        rospy.loginfo('Learned synergy space (from {}-dims) with {} points.'.
+                      format(self._D, self._N))
+        rospy.loginfo(' Explained variance ratio: {}\b... ]'.format(
+            self._pca.explained_variance_ratio_[0:4]))
+
         return True
 
     def fit_joint_state_messages(self, joint_state_messages):
