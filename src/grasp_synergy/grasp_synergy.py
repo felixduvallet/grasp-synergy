@@ -40,7 +40,9 @@ class GraspSynergy(object):
 
         """
 
-        if len(joint_values) <= 0:
+        assert isinstance(joint_values, np.ndarray), 'Must have np.array().'
+
+        if joint_values.size <= 0:
             return False
 
         self._N = joint_values.shape[0]

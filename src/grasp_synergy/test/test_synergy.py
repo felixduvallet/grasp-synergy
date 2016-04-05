@@ -35,9 +35,19 @@ class TestCase(unittest.TestCase):
         self.assertEqual(25, self.synergy._N)
         self.assertEqual(5, len(self.synergy._pca.components_))
 
+    def test_fit_joint_values_bad_type(self):
+        joints = [[1, 2, 3], [4, 5, 6]]
+        with self.assertRaisesRegexp(AssertionError, 'Must have'):
+            ret = self.synergy.fit_joint_values(joints)
+
     def test_fit_joint_values_empty(self):
-        joints = np.zeros((0, 0))
+
+        # Interesting fact about numpy arrays: len(joints) is 10 while
+        # joints.size is 0.
+        joints = np.zeros((10, 0))
+
         ret = self.synergy.fit_joint_values(joints)
+
         self.assertFalse(ret)
         self.assertEqual(0, self.synergy._D)
         self.assertEqual(0, self.synergy._N)
@@ -51,8 +61,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(16, len(self.synergy._pca.components_))
 
     def test_fit_joint_messages_empty(self):
-        messages = []
-        ret = self.synergy.fit_joint_values(messages)
+        messages = []  # List is okay.
+        ret = self.synergy.fit_joint_state_messages(messages)
         self.assertFalse(ret)
         self.assertEqual(0, self.synergy._D)
         self.assertEqual(0, self.synergy._N)
