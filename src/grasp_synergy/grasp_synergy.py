@@ -24,6 +24,13 @@ class GraspSynergy(object):
         # representation.
         self._transformed_joint_angles = None
 
+    @property
+    def trained(self):
+        """
+        :return True if the synergy space has been computed.
+        """
+        return hasattr(self._pca, 'components_')
+
     def fit_joint_values(self, joint_values):
         """
         Fit the principal components of the given joint values to compute the

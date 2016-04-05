@@ -27,6 +27,18 @@ class TestCase(unittest.TestCase):
         self.assertEqual(0, self.synergy._D)
         self.assertEqual(0, self.synergy._N)
 
+    def test_trained_with_data(self):
+        self.assertFalse(self.synergy.trained)
+        joints = np.random.random((25, 5))
+        self.synergy.fit_joint_values(joints)
+
+        self.assertTrue(self.synergy.trained)
+
+    def test_trained_no_data(self):
+        joints = np.zeros((10, 0))
+        self.synergy.fit_joint_values(joints)
+        self.assertFalse(self.synergy.trained)
+
     def test_fit_joint_values(self):
         joints = np.random.random((25, 5))
         ret = self.synergy.fit_joint_values(joints)
@@ -38,7 +50,7 @@ class TestCase(unittest.TestCase):
     def test_fit_joint_values_bad_type(self):
         joints = [[1, 2, 3], [4, 5, 6]]
         with self.assertRaisesRegexp(AssertionError, 'Must have'):
-            ret = self.synergy.fit_joint_values(joints)
+            self.synergy.fit_joint_values(joints)
 
     def test_fit_joint_values_empty(self):
 
