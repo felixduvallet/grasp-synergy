@@ -57,16 +57,16 @@ class GraspSynergy(object):
         self._transformed_joint_angles = self._pca.fit_transform(joint_values)
         return True
 
-    def fit_joint_state_messages(self, joint_states_msgs):
+    def fit_joint_state_messages(self, joint_state_messages):
         """
         Extract joint state values from a list of ROS messages, then compute the
         grasp synergies.
 
-        :param joint_states_msgs A list of ROS sensor_msgs/JointState.
+        :param joint_state_messages A list of ROS sensor_msgs/JointState.
         """
 
         joint_values = []
-        for (idx, msg) in enumerate(joint_states_msgs):
+        for (idx, msg) in enumerate(joint_state_messages):
             try:  # Catch any exceptions due to a wrong message type.
                 joint_values.append(msg.position)
             except AttributeError:
@@ -150,5 +150,3 @@ class GraspSynergy(object):
             transformed_max = \
                 np.max(self._transformed_joint_angles, axis=0)[component_num]
         return transformed_min, transformed_max
-
-
