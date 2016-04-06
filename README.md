@@ -13,8 +13,10 @@ configuration space to control the hand.
 
 This ROS package is independent of any hand configuration.
 It consists of two components:
- - the GraspSynergy class: basically a wrapper around PCA.
- - the synergy_node: ROS magic to provide nice interfaces for controlling hands.
+ - the GraspSynergy class: compute & store synergies from high-dimensional grasp
+   configurations, and compute grasps from low-dimensional input.
+ - the synergy_node: ROS magic to provide nice interfaces for controlling grasp
+   synergies.
 
 ## grasp_synergy
 
@@ -54,21 +56,28 @@ states.
 The node can create a variable number of subscribers: one for the
 fully-specified coefficient vector, and one per component (with singleton
 values).
+By default, the node is trained using a bag file of hand configuration data.
 
-So for example, you might have the following subscribers:
+So for example, you might have the following subscribers for 5 synergies:
 ```
-/grasp_synergy
-/grasp_synergy/syn_0
-/grasp_synergy/syn_1
-/grasp_synergy/syn_2
-/grasp_synergy/syn_3
-/grasp_synergy/syn_4
+ * /grasp_synergy [std_msgs/Float32MultiArray]
+ * /grasp_synergy/syn_0 [std_msgs/Float32]
+ * /grasp_synergy/syn_1 [std_msgs/Float32]
+ * /grasp_synergy/syn_2 [std_msgs/Float32]
+ * /grasp_synergy/syn_3 [std_msgs/Float32]
 ```
 
-This enables you to use tools like `rqt_ez_publisher` to provide a nice slider
-GUI interface to the synergy space:
+This enables you to use tools like `rqt_ez_publisher`
+(http://wiki.ros.org/rqt_ez_publisher) to provide a nice slider GUI interface to
+the synergy space:
 
 ![rqt_grasp](https://cloud.githubusercontent.com/assets/6153835/14283454/c8cb284a-fb43-11e5-995e-452cfa981145.png)
+
+NOTE: Due to a small [bug](https://github.com/OTL/rqt_ez_publisher/issues/17) in
+rqt_ez_publisher, if you want to use the sliders to control the individual
+synergies (/grasp_synergy/syn_N) you need to use the latest rqt_ez_publisher
+(checkout directly from github into your workspace and run the local copy).
+
 
 **Publisher:**
 The desired joint state topic must be given.
