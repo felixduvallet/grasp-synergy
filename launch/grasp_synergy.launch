@@ -1,0 +1,14 @@
+<launch>
+
+  <arg name="hand_control_topic" default="/allegroHand/joint_cmd" />
+  <arg name="synergy_bag_file" />
+  <arg name="num_synergies" default="5" />
+
+  <node name="grasp_synergy_node"
+        pkg="grasp_synergy"
+        type="synergy_node.py"
+        output="screen"
+        args="--hand_control_topic $(arg hand_control_topic)
+              --bag_filename $(arg synergy_bag_file)
+              --num_synergies $(arg num_synergies)" />
+</launch>
