@@ -1,0 +1,11 @@
+<launch>
+  <group ns="test_synergy">
+    <include file="$(find grasp_synergy)/launch/grasp_synergy.launch">
+      <arg name="synergy_bag_file" value="$(find grasp_synergy)/src/grasp_synergy/test/data/allegro.bag" />
+      <arg name="num_synergies" value="3"/>
+    </include>
+
+    <!-- <test pkg="grasp_synergy" type="grasp_synergy_test.py" test-name="synergy_launch_test"/> -->
+
+  </group>
+</launch>

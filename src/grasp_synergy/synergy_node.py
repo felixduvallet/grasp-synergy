@@ -20,7 +20,7 @@ class GraspSynergyNode(object):
     """
 
     def __init__(self, joint_cmd_topic,
-                 synergy_input_topic='/grasp_synergy',
+                 synergy_input_topic='grasp_synergy',
                  num_synergies=2):
 
         self._synergy = GraspSynergy()
@@ -84,7 +84,7 @@ class GraspSynergyNode(object):
 
         Each component subscriber only listens to the float corresponding to
         its component's singular value. Each component subscriber is nested
-        under the top-level one: /synergy_input_topic/
+        under the top-level one: synergy_input_topic/
 
         :param synergy_input_topic The top-level topic.
 
@@ -129,7 +129,8 @@ def run(arguments):
 
     node = GraspSynergyNode(joint_cmd_topic=hand_control_topic,
                             num_synergies=num_synergies)
-    node.fit_bag_file(fpath)
+    if not node.fit_bag_file(fpath):
+        return
     rospy.spin()
 
 

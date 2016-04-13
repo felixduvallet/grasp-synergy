@@ -6,6 +6,7 @@ project(grasp_synergy)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  rostest
 )
 
 ## System dependencies are found with CMake's conventions
@@ -41,7 +42,5 @@ catkin_package(
 ## Add folders to be run by python nosetests
 if(CATKIN_ENABLE_TESTING)
   catkin_add_nosetests(src/grasp_synergy)
+  add_rostest(test/grasp_synergy.test)
 endif()
-
-
-
