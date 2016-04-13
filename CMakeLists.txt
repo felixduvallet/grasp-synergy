@@ -6,6 +6,7 @@ project(grasp_synergy)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  rostest
 )
 
 ## System dependencies are found with CMake's conventions
