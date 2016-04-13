@@ -48,8 +48,9 @@ class GraspSynergyNode(object):
                           'training data?')
             return
 
-        rospy.logdebug('Commanding synergy: {}'.format(synergy))
         grasp = self._synergy.compute_grasp(synergy)
+        rospy.logdebug('Commanding synergy: {} -> grasp {}'.format(
+            synergy, grasp))
 
         joint_state = JointState()
         joint_state.position = grasp
@@ -116,8 +117,9 @@ def run(arguments):
     parser.add_argument('--bag_filename', required=True,
                         help='Filepath for bag file of grasp data')
     parser.add_argument('--num_synergies', default=4,
+                        type=int,
                         help='Number of synergies.')
-    args = parser.parse_args(arguments)
+    args = parser.parse_args(rospy.myargv(arguments))
 
     rospy.init_node('grasp_synergy')
 
