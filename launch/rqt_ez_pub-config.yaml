@@ -1,0 +1,6 @@
+publish_interval: 100
+settings:
+  /grasp_synergy/data[0]: {is_repeat: false, max: 1.0, min: -1.0}
+  /grasp_synergy/data[1]: {is_repeat: false, max: 1.0, min: -1.0}
+  /grasp_synergy/data[2]: {is_repeat: false, max: 1.0, min: -1.0}
+texts: ['/grasp_synergy/data[0]', '/grasp_synergy/data[1]', '/grasp_synergy/data[2]']
