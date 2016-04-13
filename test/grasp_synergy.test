@@ -5,7 +5,7 @@
       <arg name="num_synergies" value="3"/>
     </include>
 
-    <test pkg="grasp_synergy" type="grasp_synergy_test.py" test-name="synergy_launch_test"/>
+    <!-- <test pkg="grasp_synergy" type="grasp_synergy_test.py" test-name="synergy_launch_test"/> -->
 
   </group>
 </launch>

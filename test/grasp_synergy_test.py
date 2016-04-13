@@ -7,6 +7,9 @@ class SynergySelfCheck(unittest.TestCase):
     """
     Very basic self-test capabilities.
 
+    NOTE: currently these aren't run because of deadlock problems in creating
+    the topic subscribers.
+
     """
 
     def setUp(self):
