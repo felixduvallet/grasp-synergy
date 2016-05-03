@@ -4,6 +4,8 @@
   <arg name="synergy_bag_file" />
   <arg name="num_synergies" default="5" />
   <arg name="synergy_gui" default="false" />
+  <arg name="rqt_slider_config"
+       default="$(find grasp_synergy)/launch/rqt_ez_pub-config.yaml" />
 
   <node name="grasp_synergy_node"
         pkg="grasp_synergy"
@@ -16,6 +18,6 @@
   <node name="synergy_gui"
         pkg="rqt_ez_publisher"
         type="rqt_ez_publisher"
-        args="--slider-file $(find grasp_synergy)/launch/rqt_ez_pub-config.yaml"
+        args="--slider-file $(arg rqt_slider_config)"
         if="$(arg synergy_gui)"/>
 </launch>
