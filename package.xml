@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>grasp_synergy</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <description>Grasp Synergies (aka eigengrasps): compute, store, and command low-dimensional grasp representations.</description>
 
   <maintainer email="felix.duvallet@epfl.ch">Felix Duvallet</maintainer>
