@@ -30,7 +30,8 @@ class GraspSynergyNode(object):
 
         self._subscriber_main = None
         self._subscriber_components = []
-        self._init_subscribers(synergy_input_topic, num_synergies)
+        queue_size = 1  # for now we don't expose this as a parameter
+        self._init_subscribers(synergy_input_topic, num_synergies, queue_size)
 
     def fit_joint_values(self, joint_values):
         return self._synergy.fit_joint_values(joint_values)
@@ -77,7 +78,8 @@ class GraspSynergyNode(object):
         alpha[component_number] = data.data
         self.command_synergy(alpha)
 
-    def _init_subscribers(self, synergy_input_topic, num_synergies=0):
+    def _init_subscribers(self, synergy_input_topic, num_synergies=0,
+                          queue_size=1):
         """
         Create num_synergies+1 subscribers. The main (top-level) subscriber
         listens for an array of floats.
@@ -90,11 +92,18 @@ class GraspSynergyNode(object):
 
         :param num_synergies Number of component subscribers to generate.
 
+        :param queue_size Subscriber queue size. Setting the queue size
+        small allows dropping older messages when a new one is received,
+        to prevent a large queue of messages to process. This is useful
+        because the synergy callback can take some time to compute the
+        grasp.
+
         """
 
         # Main callback for arrays.
         self._subscriber_main = rospy.Subscriber(
-            synergy_input_topic,  Float32MultiArray, self._callback_main)
+            synergy_input_topic,  Float32MultiArray, self._callback_main,
+            queue_size=queue_size)
         rospy.loginfo('Created main subscriber {}'.format(synergy_input_topic))
 
         # Component subscriber, using individual (nested) topic names and a
@@ -103,7 +112,8 @@ class GraspSynergyNode(object):
             topic = '{}/syn_{}'.format(synergy_input_topic, idx)
 
             subscriber = rospy.Subscriber(
-                topic, Float32, self._callback_component, idx)
+                topic, Float32, self._callback_component, idx,
+                queue_size=queue_size)
             self._subscriber_components.append(subscriber)
             rospy.loginfo('  Created component subscriber {}'.format(topic))
         pass
