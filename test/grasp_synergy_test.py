@@ -21,6 +21,7 @@ class SynergySelfCheck(unittest.TestCase):
             print self.topic_dict
 
             rospy.sleep(0.02)
+        rospy.sleep(0.1)
 
     def test_topics(self):
         # Make sure we have the right number of topics in the appropriate
