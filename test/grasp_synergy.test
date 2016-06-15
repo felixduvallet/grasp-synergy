@@ -5,6 +5,8 @@
       <arg name="num_synergies" value="3"/>
     </include>
 
+    <!-- NOTE: Due to unresolved issues the basic tests aren't very reliable, so
+         they are currently disabled. -->
     <!-- <test pkg="grasp_synergy" type="grasp_synergy_test.py" test-name="synergy_launch_test"/> -->
 
   </group>
