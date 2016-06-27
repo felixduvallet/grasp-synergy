@@ -5,6 +5,7 @@
   <description>Grasp Synergies (aka eigengrasps): compute, store, and command low-dimensional grasp representations.</description>
 
   <maintainer email="felix.duvallet@epfl.ch">Felix Duvallet</maintainer>
+  <author email="felix.duvallet@epfl.ch">Felix Duvallet</author>
   <license>BSD</license>
 
 
