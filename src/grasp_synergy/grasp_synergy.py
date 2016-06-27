@@ -4,6 +4,15 @@ from sklearn.decomposition import PCA
 import rospy
 import rosbag
 
+"""
+This is the GraspSynergy class. It does the book-keeping of the low-dimensional
+grasp representations (the eigen-grasps).
+
+For the ROS functionality, see synergy_node.py.
+
+Author: Felix Duvallet <felixd@gmail.com>
+"""
+
 
 class GraspSynergy(object):
     """
@@ -65,8 +74,8 @@ class GraspSynergy(object):
 
     def fit_joint_state_messages(self, joint_state_messages):
         """
-        Extract joint state values from a list of ROS messages, then compute the
-        grasp synergies.
+        Extract joint state values from a list of ROS messages, then
+        compute the grasp synergies.
 
         :param joint_state_messages A list of ROS sensor_msgs/JointState.
         """
@@ -85,8 +94,8 @@ class GraspSynergy(object):
 
     def fit_bag_file(self, bag_filepath):
         """
-        Extract *all* joint state messages from the given bag file, then compute
-        the hand synergies.
+        Extract *all* joint state messages from the given bag file, then
+        compute the hand synergies.
 
         :param bag_filepath: Fully-qualified filepath of the bagfile.
         """
@@ -138,8 +147,8 @@ class GraspSynergy(object):
 
     def synergy_range(self, component_num):
         """
-        Compute the range of values for the i'th component of the synergy, using
-        the transformed original values used to train the PCA.
+        Compute the range of values for the i'th component of the synergy,
+        using the transformed original values used to train the PCA.
 
         If there are no synergies or the component number is invalid, returns
         (0, 0).

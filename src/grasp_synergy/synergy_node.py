@@ -10,11 +10,22 @@ from std_msgs.msg import Float32MultiArray, Float32
 
 from grasp_synergy import GraspSynergy
 
+"""
+
+This is the synergy ROS node. It deals with receiving grasp synergy commands
+(scalars or arrays), computes the resulting grasp, and commands it to the hand.
+
+For the actual details of the implementation, see grasp_synergy.py.
+
+Author: Felix Duvallet <felixd@gmail.com>
+
+"""
+
 
 class GraspSynergyNode(object):
     """
-    The grasp synergy node subscribes to low-dimensional synergies and publishes
-    desired joint state.
+    The grasp synergy node subscribes to low-dimensional synergies
+    and publishes desired joint state.
 
     It is hand agnostic.
     """

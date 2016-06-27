@@ -5,6 +5,10 @@ import numpy as np
 
 from grasp_synergy.grasp_synergy import GraspSynergy
 
+"""
+Author: Felix Duvallet <felixd@gmail.com>
+"""
+
 
 class TestCase(unittest.TestCase):
 
