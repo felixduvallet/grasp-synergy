@@ -1,5 +1,9 @@
-# Generic .travis.yml file for running continuous integration on Travis-CI with
+# Generic .travis.yml file for running continuous integration on Travis-CI for
 # any ROS package.
+#
+# Available here:
+#   - http://felixduvallet.github.io/ros-travis-integration
+#   - https://github.com/felixduvallet/ros-travis-integration
 #
 # This installs ROS on a clean Travis-CI virtual machine, creates a ROS
 # workspace, resolves all listed dependencies, and sets environment variables
@@ -7,11 +11,12 @@
 # no compilation errors), and runs all the tests. If any of the compilation/test
 # phases fail, the build is marked as a failure.
 #
-# We handle two types of package dependencies:
-#   - packages (ros and otherwise) available through apt-get. These are installed
-#     using rosdep, based on the information in the ROS package.xml.
-#   - dependencies that must be checked out from source. These are handled by
-#     'wstool', and should be listed in a file named dependencies.rosinstall.
+# We handle two types of package dependencies specified in the package manifest:
+#   - system dependencies that can be installed using `rosdep`, including other
+#     ROS packages and system libraries. These dependencies must be known to
+#     `rosdistro` and get installed using apt-get.
+#   - package dependencies that must be checked out from source. These are handled by
+#     `wstool`, and should be listed in a file named dependencies.rosinstall.
 #
 # There are two variables you may want to change:
 #   - ROS_DISTRO (default is indigo). Note that packages must be available for
@@ -55,6 +60,9 @@ env:
     - ROSINSTALL_FILE=$CI_SOURCE_PATH/dependencies.rosinstall
     - CATKIN_OPTIONS=$CI_SOURCE_PATH/catkin.options
     - ROS_PARALLEL_JOBS='-j8 -l6'
+    # Set the python path manually to include /usr/-/python2.7/dist-packages
+    # as this is where apt-get installs python packages.
+    - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages
 
 ################################################################################
 
@@ -83,7 +91,7 @@ install:
   - cd ~/catkin_ws/src
   - ln -s $CI_SOURCE_PATH .
 
-# Install all dependencies, using wstool and rosdep.
+# Install all dependencies, using wstool first and rosdep second.
 # wstool looks for a ROSINSTALL_FILE defined in the environment variables.
 before_script:
   # source dependencies: install using wstool.
@@ -95,11 +103,18 @@ before_script:
   - cd ~/catkin_ws
   - rosdep install -y --from-paths src --ignore-src --rosdistro $ROS_DISTRO
 
-# Compile and test. If the CATKIN_OPTIONS file exists, use it as an argument to
-# catkin_make.
+# Compile and test (mark the build as failed if any step fails). If the
+# CATKIN_OPTIONS file exists, use it as an argument to catkin_make, for example
+# to blacklist certain packages.
+#
+# NOTE on testing: `catkin_make run_tests` will show the output of the tests
+# (gtest, nosetest, etc..) but always returns 0 (success) even if a test
+# fails. Running `catkin_test_results` aggregates all the results and returns
+# non-zero when a test fails (which notifies Travis the build failed).
 script:
+  - source /opt/ros/$ROS_DISTRO/setup.bash
   - cd ~/catkin_ws
   - catkin_make $( [ -f $CATKIN_OPTIONS ] && cat $CATKIN_OPTIONS )
-  # Testing: Use both run_tests (to see the output) and test (to error out).
-  - catkin_make run_tests  # This always returns 0, but looks pretty.
-  - catkin_make test  # This will return non-zero if a test fails.
+  # Run the tests, ensuring the path is set correctly.
+  - source devel/setup.bash
+  - catkin_make run_tests && catkin_test_results
